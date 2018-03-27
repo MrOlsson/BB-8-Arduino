@@ -43,8 +43,8 @@ long last_t;
 //double consKp=1 * constant, consKi=0.05 * 1, consKd=0.25 * constant;
 
 #define constant 400 / 12
-double aggKp=7.65454604902801, aggKi=10.1441825596509, aggKd=4.30720899264627;
-double consKp=7.65454604902801, consKi=10.1441825596509, consKd=4.30720899264627;
+double aggKp=0, aggKi=4.2, aggKd=0;
+double consKp=0, consKi=4.2, consKd=0;
 
 double L_Input, L_Output, L_Setpoint, L_Gap, R_Input, R_Output, R_Setpoint, R_Gap;
 
@@ -57,6 +57,7 @@ PID L_PID(&L_Input, &L_Output, &L_Setpoint, consKp, consKi, consKd, DIRECT);
 PID R_PID(&R_Input, &R_Output , &R_Setpoint, consKp, consKi, consKd, DIRECT);
 
 void PIDSetup(){
+  md.init();
   //turn the PID on
   L_PID.SetMode(AUTOMATIC);
   R_PID.SetMode(AUTOMATIC);
@@ -74,8 +75,8 @@ void PIDLoop(){
   L_Setpoint = (MaximumVelocity * input.velocity + omega_till_hast * input.omega * MaximumOmega);
   R_Setpoint = (MaximumVelocity * input.velocity - omega_till_hast * input.omega * MaximumOmega);
 
-  L_Input = getRads().L_wheel * 0.25 / 4;
-  R_Input = getRads().R_wheel * 0.25 / 4;
+  L_Input = -getRads().L_wheel;
+  R_Input = -getRads().R_wheel;
 
   stopIfFault();
   
