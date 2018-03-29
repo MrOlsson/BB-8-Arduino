@@ -22,13 +22,16 @@ void setup() {
   PIDSetup();
 
 }
-
+int oldTime=0;
 void loop() {
   // put your main code here, to run repeatedly:      
   
   //ImuLoop();
   PIDLoop();
-  printPidIO(true);
+  if(millis()>oldTime+100){
+    printPidIO(true);
+    oldTime = millis();
+  }
   /*if((millis() - inputTime) > 5000 && inputTime != 0){
     setMotorSpeed(0, 0);
     Serial.println("shut off motors");
@@ -55,11 +58,12 @@ void serialEvent2(){
       
       inputTime = millis();
       //Debug, do not use Serial.print in event function!
+      /*
       Serial.print("X: ");
       Serial.print(input.omega);
       Serial.print(" Y: ");
       Serial.println(input.velocity);
-      
+      */
       inputString = ""; // reset inputString for new data
     }
   }

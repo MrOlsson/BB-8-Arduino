@@ -71,12 +71,12 @@ void PIDSetup(){
 }
 
 void PIDLoop(){
-
+  
   L_Setpoint = (MaximumVelocity * input.velocity + omega_till_hast * input.omega * MaximumOmega);
   R_Setpoint = (MaximumVelocity * input.velocity - omega_till_hast * input.omega * MaximumOmega);
 
-  L_Input = -getRads().L_wheel;
-  R_Input = -getRads().R_wheel;
+  L_Input = getRads().L_wheel;
+  R_Input = getRads().R_wheel;
 
   stopIfFault();
   
@@ -131,28 +131,29 @@ void setMotorSpeed(int LeftSpeed, int RightSpeed){ //set speed > 400 to keep old
 }
 
 void printPidIO(bool newline){
-  Serial.print("Input: ");
+  //Serial.print("Input: ");
   Serial.print(L_Input);
   Serial.print(" ");
   Serial.print(R_Input);
   Serial.print(" ");
 
-  Serial.print(" Setpoint: ");
+  //Serial.print(" Setpoint: ");
   Serial.print(L_Setpoint);
   Serial.print(" ");
   Serial.print(R_Setpoint);
   Serial.print(" ");
 
-  Serial.print(" Gap: ");
+  //Serial.print(" Gap: ");
   Serial.print(L_Gap);
   Serial.print(" ");
   Serial.print(R_Gap);
   Serial.print(" ");
 
-  Serial.print(" Output: ");
+  //Serial.print(" Output: ");
   Serial.print(L_Output);
   Serial.print(" ");
   Serial.print(R_Output);
+
   if(newline)
     Serial.println();
 }
