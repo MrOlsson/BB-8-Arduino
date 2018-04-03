@@ -8,6 +8,7 @@ DualVNH5019MotorShield md;
 // Right motor == Motor 2
 //#define MotorMaxValue 400
 #define MotorMaxValue 12
+#define BluetoothViewer
 //functions included from motor shield library 
 /* void init() 
  *    Initialize pinModes and timer1.
@@ -131,6 +132,33 @@ void setMotorSpeed(int LeftSpeed, int RightSpeed){ //set speed > 400 to keep old
 }
 
 void printPidIO(bool newline){
+  #ifdef BluetoothViewer
+  //Serial.print("Input: ");
+  Serial2.print(L_Input);
+  Serial2.print(" ");
+  Serial2.print(R_Input);
+  Serial2.print(" ");
+
+  //Serial.print(" Setpoint: ");
+  Serial2.print(L_Setpoint);
+  Serial2.print(" ");
+  Serial2.print(R_Setpoint);
+  Serial2.print(" ");
+
+  //Serial.print(" Gap: ");
+  Serial2.print(L_Gap);
+  Serial2.print(" ");
+  Serial2.print(R_Gap);
+  Serial2.print(" ");
+
+  //Serial.print(" Output: ");
+  Serial2.print(L_Output);
+  Serial2.print(" ");
+  Serial2.print(R_Output);
+
+  if(newline)
+    Serial2.println();
+  #else
   //Serial.print("Input: ");
   Serial.print(L_Input);
   Serial.print(" ");
@@ -156,5 +184,6 @@ void printPidIO(bool newline){
 
   if(newline)
     Serial.println();
+  #endif
 }
 
