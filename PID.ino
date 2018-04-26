@@ -10,48 +10,24 @@ DualVNH5019MotorShield md;
 #define MotorMaxValue 12
 #define BluetoothViewer
 //functions included from motor shield library 
-/* void init() 
- *    Initialize pinModes and timer1.
- * void setM1Speed(int speed) 
- *    Set speed and direction for motor 1. Speed should be between -400 and 400. 400 corresponds to motor current flowing from M1A to M1B. -400 corresponds to motor current flowing from M1B to M1A. 0 corresponds to full coast.
- * void setM2Speed(int speed) 
- *    Set speed and direction for motor 2. Speed should be between -400 and 400. 400 corresponds to motor current flowing from M2A to M2B. -400 corresponds to motor current flowing from M2B to M2A. 0 corresponds to full coast.
- * void setSpeeds(int m1Speed, int m2Speed) 
- *    Set speed and direction for motor 1 and 2.
- * void setM1Brake(int brake) 
- *    Set brake for motor 1. Brake should be between 0 and 400. 0 corresponds to full coast, and 400 corresponds to full brake.
- * void setM2Brake(int brake) 
- *    Set brake for motor 2. Brake should be between 0 and 400. 0 corresponds to full coast, and 400 corresponds to full brake.
- * void setBrakes(int m1Brake, int m2Brake) 
- *    Set brake for motor 1 and 2.
- * unsigned int getM1CurrentMilliamps() 
- *    Returns current reading from motor 1 in milliamps. See the notes in the "Current readings" section below.
- * unsigned int getM2CurrentMilliamps() 
- *    Returns current reading from motor 2 in milliamps. See the notes in the "Current readings" section below.
- * unsigned char getM1Fault() 
- *    Returns 1 if there is a fault on motor driver 1, 0 if no fault.
- * unsigned char getM2Fault() 
- *    Returns 1 if there is a fault on motor driver 2, 0 if no fault.
- */
 
 // Define PID regulator parameters and variables
 int PIDSampleTime = 100;
 long cur_t;
 long last_t;
-//#define constant 200
-//Define the aggressive and conservative Tuning Parameters
-//double aggKp=4 * constant, aggKi=0.2 * 1, aggKd=1 * constant;
-//double consKp=1 * constant, consKi=0.05 * 1, consKd=0.25 * constant;
 
-#define constant 400 / 12
-double aggKp=0, aggKi=4.2, aggKd=0;
-double consKp=0, consKi=4.2, consKd=0;
+
+#define voltageToMotorspeed 400 / 12              //parameter for att konvertera spänningen till input till motorkontrollern.
+double aggKp=2, aggKi=4.2, aggKd=0;
+double consKp=2, consKi=4.2, consKd=0;
 
 double L_Input, L_Output, L_Setpoint, L_Gap, R_Input, R_Output, R_Setpoint, R_Gap;
 
 double omega_till_hast = 0.25*0.27/(2*0.045*4); // R*L/(2*r*N)
-#define MaximumVelocity 1 //2
-#define MaximumOmega 2
+#define wheelrotationToSphereSpeed 0.05 
+
+#define MaximumVelocity 0.25
+#define MaximumOmega 0.25
 
 //Specify the links and initial tuning parameters
 PID L_PID(&L_Input, &L_Output, &L_Setpoint, consKp, consKi, consKd, DIRECT);
@@ -75,12 +51,11 @@ void PIDLoop(){
   
   L_Setpoint = (MaximumVelocity * input.velocity + omega_till_hast * input.omega * MaximumOmega);
   R_Setpoint = (MaximumVelocity * input.velocity - omega_till_hast * input.omega * MaximumOmega);
-
-  L_Input = getRads().L_wheel;
-  R_Input = getRads().R_wheel;
+  
+  L_Input = getRads().L_wheel * wheelrotationToSphereSpeed;
+  R_Input = getRads().R_wheel * wheelrotationToSphereSpeed;
 
   stopIfFault();
-  
 
   L_Gap = L_Setpoint - L_Input; // distance away from setpoint
   R_Gap = R_Setpoint - R_Input;
@@ -107,19 +82,19 @@ void PIDLoop(){
   R_PID.Compute();
 
   //setMotorSpeed(L_Output, R_Output);
-  setMotorSpeed(L_Output * constant, R_Output * constant);
+  setMotorSpeed(L_Output * voltageToMotorspeed, R_Output * voltageToMotorspeed);
 }
 
 void stopIfFault()
 {
   if (md.getM1Fault())
   {
-    Serial.println("M1 fault");
+    Serial2.println("M1 fault");
     while(1);
   }
   if (md.getM2Fault())
   {
-    Serial.println("M2 fault");
+    Serial2.println("M2 fault");
     while(1);
   }
 }

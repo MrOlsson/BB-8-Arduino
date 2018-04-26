@@ -8,6 +8,7 @@ long inputTime = 0;
 struct signals{
   double velocity;
   double omega;
+  int head;
 };
 
 signals input;
@@ -32,10 +33,6 @@ void loop() {
     printPidIO(true);
     oldTime = millis();
   }
-  /*if((millis() - inputTime) > 5000 && inputTime != 0){
-    setMotorSpeed(0, 0);
-    Serial.println("shut off motors");
-  }*/
 }
 
 // This is called when new data is available from bluetooth device
@@ -46,9 +43,11 @@ void serialEvent2(){
     if(inChar == '\n'){ //if last bit was a newLine, read is compleate.
       int Xindex = inputString.indexOf('X');
       int Yindex = inputString.indexOf('Y');
+      int Hindex = inputString.indexOf('H');
       input.omega = inputString.substring(Xindex + 1, Yindex).toInt() / 100.0;
-      input.velocity = inputString.substring(Yindex + 1).toInt() / 100.0;
-
+      input.velocity = inputString.substring(Yindex + 1, Hindex).toInt() / 100.0;
+      input.head = inputString.substring(Hindex+1).toInt();
+      
       // fulhax för oscars enhetssteg
       /*if(inputString.substring(Yindex + 1).toInt() > 0)
         input.velocity = 1;
