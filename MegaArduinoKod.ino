@@ -1,4 +1,5 @@
 #include <SoftwareSerial.h>
+#define LEDPORT 14
 
 // Connect bluetooth Tx to 17 and bluetooth Rx to 16
 // Bluetooth is called by Serial1
@@ -21,9 +22,11 @@ void setup() {
   //ImuSetup();
   VelocitySetup();
   PIDSetup();
-
+  pinMode(LEDPORT, OUTPUT);
+  digitalWrite(LEDPORT,HIGH);
 }
 int oldTime=0;
+short n;
 void loop() {
   // put your main code here, to run repeatedly:      
   
@@ -32,6 +35,21 @@ void loop() {
   if(millis()>oldTime+100){
     printPidIO(true);
     oldTime = millis();
+    /*
+    if(input.head == 1){
+      digitalWrite(LEDPORT,HIGH);
+    }else if(input.head == -1){
+      digitalWrite(LEDPORT,HIGH);
+      if(n>5){
+        digitalWrite(LEDPORT, LOW);
+      }if(n>9){
+        n=0;
+      }
+      n++;
+    }else{
+      digitalWrite(LEDPORT,LOW);
+    }
+    */
   }
 }
 
