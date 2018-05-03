@@ -18,7 +18,7 @@ long last_t;
 
 
 #define voltageToMotorspeed 400 / 12              //parameter for att konvertera spänningen till input till motorkontrollern.
-double aggKp=2, aggKi=4.2, aggKd=0;
+double aggKp=5, aggKi=9.2, aggKd=0;
 double consKp=2, consKi=4.2, consKd=0;
 
 double L_Input, L_Output, L_Setpoint, L_Gap, R_Input, R_Output, R_Setpoint, R_Gap;
@@ -27,7 +27,7 @@ double omega_till_hast = 0.25*0.27/(2*0.045*4); // R*L/(2*r*N)
 #define wheelrotationToSphereSpeed 0.05 
 
 #define MaximumVelocity 0.25
-#define MaximumOmega 0.25
+#define MaximumOmega 0.75
 
 //Specify the links and initial tuning parameters
 PID L_PID(&L_Input, &L_Output, &L_Setpoint, consKp, consKi, consKd, DIRECT);
@@ -60,7 +60,7 @@ void PIDLoop(){
   L_Gap = L_Setpoint - L_Input; // distance away from setpoint
   R_Gap = R_Setpoint - R_Input;
 
-  if(abs(L_Gap) < 10)
+  if(abs(L_Gap) < 0.05 || (!L_Setpoint && !R_Setpoint))
   {  //we're close to setpoint, use conservative tuning parameters
     L_PID.SetTunings(consKp, consKi, consKd);
   }
@@ -69,7 +69,7 @@ void PIDLoop(){
      L_PID.SetTunings(aggKp, aggKi, aggKd);
   }
 
-  if(abs(R_Gap) < 10) // Byt ut 1 < 10 till gap < 10
+  if(abs(R_Gap) < 0.05) // Byt ut 1 < 10 till gap < 10
   {  //we're close to setpoint, use conservative tuning parameters
     R_PID.SetTunings(consKp, consKi, consKd);
   }
@@ -82,6 +82,10 @@ void PIDLoop(){
   R_PID.Compute();
 
   //setMotorSpeed(L_Output, R_Output);
+  if(L_Setpoint == 0 && R_Setpoint == 0 && abs(L_Output) < 1.5 && abs(R_Output) < 1.5){
+      L_Output = 0;
+      R_Output = 0; 
+  }
   setMotorSpeed(L_Output * voltageToMotorspeed, R_Output * voltageToMotorspeed);
 }
 

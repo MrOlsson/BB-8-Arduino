@@ -22,34 +22,22 @@ void setup() {
   //ImuSetup();
   VelocitySetup();
   PIDSetup();
+  rotSetup();
   pinMode(LEDPORT, OUTPUT);
   digitalWrite(LEDPORT,HIGH);
 }
-int oldTime=0;
+unsigned long printTime=0;
 short n;
 void loop() {
   // put your main code here, to run repeatedly:      
   
   //ImuLoop();
   PIDLoop();
-  if(millis()>oldTime+100){
+  rotLoop();
+  if(millis()>printTime+100){
     printPidIO(true);
-    oldTime = millis();
-    /*
-    if(input.head == 1){
-      digitalWrite(LEDPORT,HIGH);
-    }else if(input.head == -1){
-      digitalWrite(LEDPORT,HIGH);
-      if(n>5){
-        digitalWrite(LEDPORT, LOW);
-      }if(n>9){
-        n=0;
-      }
-      n++;
-    }else{
-      digitalWrite(LEDPORT,LOW);
-    }
-    */
+    printTime = millis();
+    
   }
 }
 
@@ -84,5 +72,21 @@ void serialEvent2(){
       inputString = ""; // reset inputString for new data
     }
   }
+}
+
+void TestHead(){
+  if(input.head == 1){
+      digitalWrite(LEDPORT,HIGH);
+    }else if(input.head == -1){
+      digitalWrite(LEDPORT,HIGH);
+      if(n>5){
+        digitalWrite(LEDPORT, LOW);
+      }if(n>9){
+        n=0;
+      }
+      n++;
+    }else{
+      digitalWrite(LEDPORT,LOW);
+    }
 }
 
