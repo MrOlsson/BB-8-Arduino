@@ -1,3 +1,4 @@
+
 #include <SoftwareSerial.h>
 #define LEDPORT 14
 
@@ -30,11 +31,11 @@ unsigned long printTime=0;
 short n;
 void loop() {
   // put your main code here, to run repeatedly:      
-  
-  //ImuLoop();
-  PIDLoop();
+
   rotLoop();
-  if(millis()>printTime+100){
+  turnLoop();
+  PIDLoop();
+  if(millis()> printTime+100){
     printPidIO(true);
     printTime = millis();
     
@@ -74,19 +75,5 @@ void serialEvent2(){
   }
 }
 
-void TestHead(){
-  if(input.head == 1){
-      digitalWrite(LEDPORT,HIGH);
-    }else if(input.head == -1){
-      digitalWrite(LEDPORT,HIGH);
-      if(n>5){
-        digitalWrite(LEDPORT, LOW);
-      }if(n>9){
-        n=0;
-      }
-      n++;
-    }else{
-      digitalWrite(LEDPORT,LOW);
-    }
-}
+
 

@@ -8,7 +8,7 @@ DualVNH5019MotorShield md;
 // Right motor == Motor 2
 //#define MotorMaxValue 400
 #define MotorMaxValue 12
-//#define BluetoothViewer
+#define BluetoothViewer
 #define angularBoost 3
 //functions included from motor shield library 
 
@@ -28,7 +28,7 @@ double L_Input, L_Output = 0, L_Setpoint, L_Gap, R_Input, R_Output = 0, R_Setpoi
 double omega_till_hast = 0.25*0.27/(2*0.045*4); // R*L/(2*r*N)
 #define wheelrotationToSphereSpeed 0.05 
 
-#define MaximumVelocity 0.25
+#define MaximumVelocity 0.30
 
 
 //Specify the links and initial tuning parameters
@@ -104,20 +104,11 @@ void stopIfFault()
 }
 
 void setMotorSpeed(int LeftSpeed, int RightSpeed){ //set speed > 400 to keep old motor speed
-  if(LeftSpeed < -400){
-    md.setM1Speed(-400);
-  }else if(LeftSpeed > 400){
-    md.setM1Speed(400);
-  }else{
-    md.setM1Speed(LeftSpeed);
-  }
-  if(RightSpeed < -400){
-    md.setM2Speed(-400);
-  }else if(RightSpeed > 400){
-    md.setM2Speed(400);
-  }else{
-    md.setM2Speed(RightSpeed);
-  }
+  LeftSpeed = constrain(LeftSpeed, -400, 400);
+  md.setM1Speed(LeftSpeed);
+  
+  RightSpeed = constrain(RightSpeed, -400, 400);
+  md.setM2Speed(RightSpeed);
 }
 
 void printPidIO(bool newline){
