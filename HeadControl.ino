@@ -97,9 +97,11 @@ void testTurn(){
     P = HKp*e;
     output = constrain(I+P, -MAXANGLE, MAXANGLE);
     turnServo.write(90+output);
-    Serial2.print(output);
-    Serial2.print(" ");
     oldTurnTime = millis();
   }
+}
+
+double getOutput(){
+  return output;
 }
 

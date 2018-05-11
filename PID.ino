@@ -113,6 +113,9 @@ void setMotorSpeed(int LeftSpeed, int RightSpeed){ //set speed > 400 to keep old
 
 void printPidIO(bool newline){
   #ifdef BluetoothViewer
+  Serial2.print(getOutput());
+  Serial2.print(" ");
+  
   //Serial.print("Input: ");
   Serial2.print(L_Input);
   Serial2.print(" ");
@@ -139,6 +142,9 @@ void printPidIO(bool newline){
   if(newline)
     Serial2.println();
   #else
+  Serial.print(getOutput());
+  Serial.print(" ");
+  
   //Serial.print("Input: ");
   Serial.print(L_Input);
   Serial.print(" ");
